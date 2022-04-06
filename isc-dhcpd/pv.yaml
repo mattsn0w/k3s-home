@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: stumpy-nfs-isc-dhcpd-server-pv
+  namespace: isc-dhcpd
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: stumpy.co.slakin.net
+    path: "/tanker/k8s/isc-dhcpd/home/data"
+  mountOptions:
+    - rw
+    - nolock
+    - soft

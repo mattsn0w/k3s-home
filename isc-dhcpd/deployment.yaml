@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isc-dhcpd-lb-app
+  namespace: isc-dhcpd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: isc-dhcpd-lb
+  template:
+    metadata:
+      labels:
+        app: isc-dhcpd-lb
+    spec:
+      hostname: isc-dhcpd-hostname
+      hostNetwork: true
+      containers:
+        - image: networkboot/dhcpd:1.1.0
+          name: iscdhcpd
+          env:
+          - name: TZ
+            value: 'America/Denver'
+          volumeMounts:
+          - name: isc-dhcpd-server-volume
+            mountPath: /data
+      volumes:
+      - name: isc-dhcpd-server-volume
+        persistentVolumeClaim:
+          claimName: isc-dhcpd-server-pvc

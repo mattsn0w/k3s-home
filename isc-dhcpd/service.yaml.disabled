@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isc-dhcpd-lb-svc
+  namespace: isc-dhcpd
+#  annotations:
+#    metallb.universe.tf/allow-shared-ip: "k3Y-t0-Sh4r3-172.16.1.91"
+spec:
+  selector:
+    app: isc-dhcpd-lb
+  type: LoadBalancer
+  loadBalancerIP: 172.16.1.91
+  ports:
+  - name: dhcp-udp
+    port: 67
+    targetPort: 67
+    protocol: UDP

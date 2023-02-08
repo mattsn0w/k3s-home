@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: pihole
+  name: volume-migration-etc-pihole
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 3
+  template:
+    metadata:
+      name: volume-migration-etc-pihole
+      labels:
+        name: volume-migration-etc-pihole
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: volume-migration
+        image: ubuntu:xenial
+        tty: true
+        command: [ "/bin/sh" ]
+        #args: [ "-c", "cp -r -v /mnt/src/pihole-etc-pihole/* /mnt/dst/pihole-etc-pihole/" ]
+        args: [ "-c", "cp -r -v /mnt/src/pihole-etc-pihole/* /mnt/dst/pihole-etc-pihole ; cp -r -v /mnt/src/pihole-etc-dnsmasq/* /mnt/dst/pihole-etc-dnsmasq/" ]
+        volumeMounts:
+          - name: stumpy-tanker-k8s-pihole-etc-pihole
+            mountPath: /mnt/src/pihole-etc-pihole
+          - name: stumpy-tanker-k8s-pihole-etc-dnsmasq
+            mountPath: /mnt/src/pihole-etc-dnsmasq
+          - name: pihole-parents-etc-dnsmasq-longhorn-vol
+            mountPath: /mnt/dst/pihole-etc-dnsmasq
+          - name: pihole-parents-etc-pihole-longhorn-vol
+            mountPath: /mnt/dst/pihole-etc-pihole
+      volumes:
+      - name: pihole-parents-etc-dnsmasq-longhorn-vol
+        persistentVolumeClaim:
+          claimName: pihole-parents-etc-dnsmasq-longhorn-pvc
+      - name: pihole-parents-etc-pihole-longhorn-vol
+        persistentVolumeClaim:
+          claimName: pihole-parents-etc-pihole-longhorn-pvc
+      - name: stumpy-tanker-k8s-pihole-etc-pihole
+        persistentVolumeClaim:
+          claimName: stumpy-tanker-k8s-pihole-etc-pihole-pvc
+      - name: stumpy-tanker-k8s-pihole-etc-dnsmasq
+        persistentVolumeClaim:
+          claimName: stumpy-tanker-k8s-pihole-etc-dnsmasq-pvc

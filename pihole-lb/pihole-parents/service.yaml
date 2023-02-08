@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-parents-tcp-lb-svc
+  namespace: pihole
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "k3Y-t0-Sh4r3-172.16.1.29"
+spec:
+  selector:
+    app: pihole-parents-l2-lb
+  type: LoadBalancer
+  loadBalancerIP: 172.16.1.29
+  ports:
+  - name: dns-tcp
+    port: 53
+    targetPort: 53
+    protocol: TCP
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-parents-udp-lb-svc
+  namespace: pihole
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "k3Y-t0-Sh4r3-172.16.1.29"
+spec:
+  selector:
+    app: pihole-parents-l2-lb
+  type: LoadBalancer
+  loadBalancerIP: 172.16.1.29
+  ports:
+  - name: dns-udp
+    port: 53
+    targetPort: 53
+    protocol: UDP
